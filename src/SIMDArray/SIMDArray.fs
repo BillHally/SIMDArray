@@ -8,6 +8,7 @@ open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 open Microsoft.FSharp.Collections
 open Microsoft.FSharp.Core.Operators
 open SIMDArrayUtils
+open System.Threading
 
     
 /// <summary>
@@ -577,6 +578,35 @@ let inline map
     while i < result.Length do
         result.[i] <- sf array.[i]
         i <- i + 1
+
+    result
+
+let inline map'
+    (vf : ^T Vector -> ^U Vector) (array : ^T[]) : ^U[] =
+
+    checkNonNull array
+    let count = Vector< ^T>.Count
+    if count <> Vector< ^U>.Count then invalidArg "array" "Output type must have the same width as input type."    
+    
+    let result = Array.zeroCreate array.Length
+    
+    let mutable i = 0
+    while i <= array.Length-count do        
+        (vf (Vector< ^T>(array,i ))).CopyTo(result,i)   
+        i <- i + count
+    
+    let remaining = array.Length - i
+
+    if array.Length > count then
+        let endResult = vf (Vector< ^T>(array, array.Length - count))
+        for j in 0..(remaining - 1) do
+            result.[i + j] <- endResult.[j + (count - remaining)]
+    else
+        let endBuffer = Array.zeroCreate count
+        Array.blit array i endBuffer 0 remaining
+        let endResult = vf (Vector< ^T>(endBuffer, 0))
+        for j in 0..(remaining - 1) do
+            result.[i + j] <- endResult.[j]
 
     result
 

@@ -347,6 +347,20 @@ let ``SIMD.map = Array.map`` () =
         (lazy test <@ multA xs = multB xs @>)   |@ "map x * x" .&.
         (lazy test <@ minusA xs = minusB xs @>) |@ "map x - x" 
 
+[<Test>]
+let ``SIMD.map' = Array.map`` () =
+    quickCheck <|
+    fun (xs: int []) ->
+        (xs.Length > 0 && xs <> [||]) ==>
+        let plusA   xs = xs |> Array.SIMD.map' (fun x -> x+x)
+        let plusB   xs = xs |> Array.map (fun x -> x+x)
+        let multA   xs = xs |> Array.SIMD.map' (fun x -> x*x)
+        let multB   xs = xs |> Array.map (fun x -> x*x)
+        let minusA  xs = xs |> Array.SIMD.map' (fun x -> x-x)
+        let minusB  xs = xs |> Array.map (fun x -> x-x)
+        (lazy test <@ plusA xs = plusB xs @>)   |@ "map x + x" .&.
+        (lazy test <@ multA xs = multB xs @>)   |@ "map x * x" .&.
+        (lazy test <@ minusA xs = minusB xs @>) |@ "map x - x" 
 
 [<Test>]                  
 let ``SIMD.mapInPlace = Array.map`` () =

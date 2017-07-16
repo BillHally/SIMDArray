@@ -119,14 +119,17 @@ type CoreBenchmark () =
 
         //for concat
         //array <- Array.init self.Length (fun i -> [|1;2;3;4;5;|])
-        
                                                   
-    //[<Benchmark>]
-    //member self.ForSum () =                                
-    //   array |> Array.map (fun x -> x*x)
-    //[<Benchmark>]
-    //member self.ForSumSIMD () =                                
-    //   array |> Array.SIMD.map (fun x -> x*x) (fun x -> x*x)
+    [<Benchmark>]
+    member self.ForSum () =                                
+       array |> Array.map (fun x -> x*x)
+    [<Benchmark>]
+    member self.ForSumSIMD () =                                
+       array |> Array.SIMD.map (fun x -> x*x) (fun x -> x*x)
+
+    [<Benchmark>]
+    member self.ForSumSIMD_map' () =                                
+       array |> Array.SIMD.map' (fun x -> x*x)
 
     //[<Benchmark>]
     //member self.Dot () =                                
@@ -136,21 +139,21 @@ type CoreBenchmark () =
     //member self.DotSIMD () =                                
     //   array |> Array.SIMD.dot array2
 
-    [<Benchmark>]
-    member self.Max () =
-        array |> Array.max
+    //[<Benchmark>]
+    //member self.Max () =
+    //    array |> Array.max
 
-    [<Benchmark>]
-    member self.MaxSIMD () =
-        array |> Array.SIMD.max
+    //[<Benchmark>]
+    //member self.MaxSIMD () =
+    //    array |> Array.SIMD.max
 
-    [<Benchmark>]
-    member self.MaxBy () =
-        array |> Array.maxBy (fun x -> x*x)
+    //[<Benchmark>]
+    //member self.MaxBy () =
+    //    array |> Array.maxBy (fun x -> x*x)
 
-    [<Benchmark>]
-    member self.MaxBySIMD () =
-        array |> Array.SIMD.maxBy (fun x -> x*x) (fun x -> x*x)
+    //[<Benchmark>]
+    //member self.MaxBySIMD () =
+    //    array |> Array.SIMD.maxBy (fun x -> x*x) (fun x -> x*x)
 
 [<EntryPoint>]
 let main argv =              
@@ -184,5 +187,3 @@ let main argv =
     switch.Run [|"CoreBenchmark"|] |> ignore
     0
    
-
-
